@@ -1,0 +1,249 @@
+﻿@page "/employeeshifts"
+@using IntraApi.App.Models
+@using IntraApi.App.Services
+@inject NavigationManager Navigation
+@inject EmployeeShiftService EmployeeShiftService
+@inject RoleService RoleService
+
+<script>
+    window.makeModalDraggable = (modalId) => {
+        const modal = document.getElementById(modalId);
+        if (!modal) {
+            console.error(`Modal with ID '${modalId}' not found.`);
+            return;
+        }
+        console.log(`Making modal with ID '${modalId}' draggable`); // Debugging line
+
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        modal.onmousedown = (e) => {
+            isDragging = true;
+            offsetX = e.clientX - modal.getBoundingClientRect().left;
+            offsetY = e.clientY - modal.getBoundingClientRect().top;
+            modal.style.cursor = 'grabbing';
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        };
+
+        function onMouseMove(e) {
+            if (isDragging) {
+                const newX = e.clientX - offsetX;
+                const newY = e.clientY - offsetY;
+                modal.style.left = `${newX}px`;
+                modal.style.top = `${newY}px`;
+            }
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+            modal.style.cursor = 'default';
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+    };
+
+
+</script>
+
+
+<h3>Employee Shifts for Current Week: @currentWeekRange</h3>
+
+
+@if (employeeShifts == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+                <th>Sunday</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in employeeShifts)
+            {
+                <tr>
+                    <td>    
+                        @employee.EmployeeName <br />
+                        @employee.PrimaryRoleName
+                    </td>
+                    @foreach (var day in daysOfWeek)
+                    {
+                        <td>
+                            @if (employee.ShiftsByDay.ContainsKey(day))
+                            {
+                                @foreach (var shift in employee.ShiftsByDay[day])
+                                {
+                                    <div class="shift-item">
+                                        [@shift.Role @shift.StartTime - @shift.EndTime]                                        
+                                        <button @onclick="() => EditShift(shift)">Edit</button>
+                                    </div>
+                                }                                
+                            }
+                            <button class="btn btn-sm btn-success" @onclick="() => AddShift(employee.EmployeeId, day)">[+]</button>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (isAddMode)
+    {
+        <div class="modal">
+            <div class="modal-content" id="addShiftModal">
+                <h4>Add Shift</h4>
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger">
+                        @errorMessage
+                    </div>
+                }
+
+                @if (validationErrors != null && validationErrors.Count > 0)
+                {
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach (var error in validationErrors)
+                            {
+                                <li>@error</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <form @onsubmit="HandleAddShift">
+                    <input type="hidden" @bind="newShift.EmployeeId" />
+                    <input type="hidden" @bind="newShift.ShiftDate" />
+                    <div>
+                        <label for="roleId">Role</label>
+                        <select id="roleId" @bind="newShift.RoleId">
+                            <option value="">-- Select Role --</option>
+                            @foreach (var role in roles)
+                            {
+                                <option value="@role.ID">@role.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <label for="startTime">Start Time</label>
+                        <input type="time" id="startTime" @bind="newShift.StartTime" />
+                    </div>
+                    <div>
+                        <label for="endTime">End Time</label>
+                        <input type="time" id="endTime" @bind="newShift.EndTime" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseAddShiftModal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (isEditMode)
+    {
+        <div class="modal">
+            <div class="modal-content" id="editShiftModal">
+                <h4>Edit Shift</h4>
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger">
+                        @errorMessage
+                    </div>
+                }
+
+                @if (validationErrors != null && validationErrors.Count > 0)
+                {
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach (var error in validationErrors)
+                            {
+                                <li>@error</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <form @onsubmit="HandleEditShift">
+                    <input type="hidden" @bind="editingShift.ShiftId" />
+                    <input type="hidden" @bind="editingShift.EmployeeRoleId" />
+                    <input type="hidden" @bind="editingShift.EmployeeId" />
+                    <div>
+                        <label for="roleId">Role</label>
+                        <select id="roleId" @bind="editingShift.RoleId">
+                            <option value="">-- Select Role --</option>
+                            @foreach (var role in roles)
+                            {
+                                <option value="@role.ID">@role.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <label for="startTime">Start Time</label>
+                        <input type="time" id="startTime" @bind="editingShift.StartTime" />
+                    </div>
+                    <div>
+                        <label for="endTime">End Time</label>
+                        <input type="time" id="endTime" @bind="editingShift.EndTime" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-danger" @onclick="ConfirmDeleteShift">Delete</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (isDeleteMode)
+    {
+        <div class="modal">
+            <div class="modal-content" id="deleteShiftModal">
+
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger">
+                        @errorMessage
+                    </div>
+                }
+
+                @if (validationErrors != null && validationErrors.Count > 0)
+                {
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach (var error in validationErrors)
+                            {
+                                <li>@error</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <h4>Confirm Delete</h4>
+                <p>You are going to delete only the shift NOT the role!
+                    Are you sure you want to delete this shift?</p>
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger">
+                        @errorMessage
+                    </div>
+                }
+                <button @onclick="HandleDeleteShift">Yes, Delete</button>
+                <button @onclick="CloseDeleteModal">Cancel</button>
+            </div>
+        </div>
+    }
+
+}
