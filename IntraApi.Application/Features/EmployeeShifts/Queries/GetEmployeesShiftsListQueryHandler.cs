@@ -31,13 +31,11 @@ namespace IntraApi.Application.Features.EmployeeShifts.Queries
             var employeeDetails = await _employeeRepository.ListAllAsync();
             var employeeMap = employeeDetails.ToDictionary(e => e.ID, e => e.FullName);
 
-            // Fetch all shifts, including role details, from the repository
             var allShifts = await _employeeShiftViewRepository.ListAllAsync();
 
-            // Extract primary roles for employees
             var primaryRoles = allShifts
-                .Where(shift => shift.IsPrimaryRole.GetValueOrDefault()) // Filter only primary roles
-                .GroupBy(shift => shift.EmployeeID.GetValueOrDefault()) // Group by EmployeeId
+                .Where(shift => shift.IsPrimaryRole.GetValueOrDefault()) 
+                .GroupBy(shift => shift.EmployeeID.GetValueOrDefault())
                 .ToDictionary(
                     group => group.Key,
                     group => group.First().RoleName // Get the first primary role name for each employee
@@ -65,7 +63,7 @@ namespace IntraApi.Application.Features.EmployeeShifts.Queries
                                 EndTime = shift.EndTime
                             }).ToList()
                         )
-                        : new Dictionary<string, List<ShiftDto>>() // If no schedule, return empty dictionary
+                        : new Dictionary<string, List<ShiftDto>>()
                 }).ToList()
             };
 

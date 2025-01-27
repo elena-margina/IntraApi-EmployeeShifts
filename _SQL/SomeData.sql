@@ -3,22 +3,6 @@
 USE [Restaurant]
 GO
 
-SELECT [ID]
-      ,[EmployeeRoleID]
-      ,[ShiftDate]
-      ,[StartTime]
-      ,[EndTime]
-      ,[Description]
-      ,[UserID]
-      ,[DModify]
-      ,[Version]
-  FROM [staffing].[EmployeeShifts]
-
-GO
-
-USE [Restaurant]
-GO
-
 
 --[EmployeeRoleID] ,[ShiftDate]  ,[StartTime] ,[EndTime] -> to create indexes checks
 			---------
@@ -134,39 +118,21 @@ select * from [staffing].[EmployeeRoles] where EmployeeID = 4
 select * from [staffing].[EmployeeRoles] where EmployeeID = 5
 select * from [staffing].[EmployeeShifts]
 
+select * from [staffing].[EmployeeRolesV]
 
 
-select * from [staffing].[EmployeeShiftsV] where EmployeeID = 9
-
-Declare @RoleID int = 3 -- IsPrimary = 1
-select * from [staffing].[Roles] where ID = 3
-select * from [staffing].[EmployeeRoles] where EmployeeID = 4
+--EmployeeShiftID = 3
+select * from [staffing].[EmployeeShiftsV] where EmployeeID = 4 and RoleID = 2
 
 
-select * from [staffing].[EmployeeShiftsV] where EmployeeID = 4
+select * from [staffing].[EmployeeShifts] where ID = 3
+
+update [staffing].[EmployeeShifts] set EmployeeRoleID = 4
+where ID = 3
 
 
+select * from [staffing].[EmployeeShiftsV] 
+--where EmployeeID = 1 and RoleID = 2 
+order by ShiftDate, StartTime, EmployeeID
 
-
-select emplr.ID as EmployeeRoleID, empl.ID as EmployeeID, empl.FullName, rol.ID as RoleID, rol.[Name], rol.IsAvailable 
-from [staffing].[EmployeeRoles] emplr 
-	join [staffing].[Employees] empl on empl.ID = emplr.EmployeeID
-	join [staffing].[Roles] rol on rol.ID = emplr.RoleID
-where empl.ID = 4
-
-select 
-	    emplr.ID as EmployeeRoleID 
-	   ,empl.ID as EmployeeID 
-	   ,empl.FullName 
-	   ,rol.ID as RoleID 
-	   ,rol.[Name] as RoleName 
-	   ,rol.IsAvailable
-	   ,emplSh.ID as EmpoyeeShiftID
-	   ,emplSh.ShiftDate
-	   ,emplSh.StartTime
-	   ,emplSh.EndTime
-	   ,emplSh.[Description] as EmployeeShiftDescr
-from [staffing].[EmployeeShifts] emplSh
-	join [staffing].[EmployeeRoles] emplR on emplR.ID = emplSh.EmployeeRoleID
-	join [staffing].[Employees] empl on empl.ID = emplr.EmployeeID
-	join [staffing].[Roles] rol on rol.ID = emplr.RoleID
+select * from [staffing].[Roles] 

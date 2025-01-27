@@ -325,6 +325,10 @@ GO
 ALTER TABLE [staffing].[EmployeeShifts] CHECK CONSTRAINT [FK_EmployeeShifts_EmployeeRoles_EmployeeRoleID]
 GO
 
+CREATE NONCLUSTERED INDEX [IX_EmployeeShifts_EmployeeRoleID] ON [staffing].[EmployeeShifts] ([EmployeeRoleID]);
+CREATE NONCLUSTERED INDEX [IX_EmployeeShifts_ShiftDate] ON [staffing].[EmployeeShifts] ([ShiftDate]);
+CREATE NONCLUSTERED INDEX [IX_EmployeeShifts_StartTime] ON [staffing].[EmployeeShifts] ([StartTime]);
+Go
 
 -- ============================================================================================================================================ 
 --                 VIEWS                                                                  
@@ -422,7 +426,6 @@ GO
 
 INSERT INTO [umUser].[Users] ([UserName],[Password],[FullName],[Mail], [Phone])
      VALUES ('Admin', 0x4D7956617262696E61727944617461, 'Elena Margina', 'e.margina@gmail.com', '0883360301')
-
 Go
 
 Declare @UserID int 
