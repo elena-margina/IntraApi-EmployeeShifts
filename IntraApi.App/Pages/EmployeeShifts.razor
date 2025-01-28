@@ -75,7 +75,10 @@ else
                 <tr>
                     <td>    
                         @employee.EmployeeName <br />
-                        @employee.PrimaryRoleName
+                        @if (!string.IsNullOrEmpty(employee.PrimaryRoleName))
+                        {
+                            <span>Primary role: <b>@employee.PrimaryRoleName</b></span>
+                        }
                     </td>
                     @foreach (var day in daysOfWeek)
                     {
