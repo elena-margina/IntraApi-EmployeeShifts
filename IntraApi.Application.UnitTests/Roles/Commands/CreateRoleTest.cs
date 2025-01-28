@@ -1,6 +1,4 @@
-﻿
-
-using AutoMapper;
+﻿using AutoMapper;
 using IntraApi.Application.Contracts.Persistence;
 using IntraApi.Application.Profiles;
 using IntraApi.Application.UnitTests.Mocks;
@@ -9,12 +7,12 @@ using Shouldly;
 
 namespace IntraApi.Application.UnitTests.Courses.Commands
 {
-    public class CreateCourseTest
+    public class CreateRoleTest
     {
         private readonly Mock<IRoleRepository> _mockRoleRepository;
         private readonly IMapper _mapper;
 
-        public CreateCourseTest()
+        public CreateRoleTest()
         {
             _mockRoleRepository = RepositoryMocks.GetRoleRepository();
             var configurationProvider = new MapperConfiguration(cfg =>

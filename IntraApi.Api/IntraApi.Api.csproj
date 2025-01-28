@@ -7,6 +7,10 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <AssemblyName>IntraApi.Api</AssemblyName>
+  </PropertyGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\IntraApi.Application\IntraApi.Application.csproj" />
     <ProjectReference Include="..\IntraApi.Persistence\IntraApi.Persistence.csproj" />

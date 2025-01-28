@@ -11,8 +11,11 @@
 
   <ItemGroup>
     <Compile Remove="Courses\**" />
+    <Compile Remove="Roles\Commands\**" />
     <EmbeddedResource Remove="Courses\**" />
+    <EmbeddedResource Remove="Roles\Commands\**" />
     <None Remove="Courses\**" />
+    <None Remove="Roles\Commands\**" />
   </ItemGroup>
 
   <ItemGroup>

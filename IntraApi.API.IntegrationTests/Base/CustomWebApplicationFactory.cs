@@ -49,7 +49,7 @@ namespace IntraApi.API.IntegrationTests.Base
         {
             var client = CreateClient(new WebApplicationFactoryClientOptions
             {
-                BaseAddress = new Uri("https://localhost:7071")
+                BaseAddress = new Uri("https://localhost:7077")
             });
 
             return client;

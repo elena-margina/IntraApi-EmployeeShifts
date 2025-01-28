@@ -23,24 +23,23 @@ namespace IntraApi.Persistence.IntegrationTests
             _intraApiDbContext = new IntraApiDBContext(dbContextOptions, _loggedInUserServiceMock.Object);
         }
 
-        //[Fact]
-        //public async void Save_SetCreatedByProperty()
-        //{
-        //    var Role = new Role()
-        //    {
-                //Name = "Test Role 1",
-                //Description = "Test description 1",
-                //SeatsAvailable = 7,
-                //IsAvailable = true,
-                //IsPrimary = false,
-                //UserID = 1,
-        //    };
+        [Fact]
+        public async void Save_SetCreatedByProperty()
+        {
+            var Role = new Role()
+            {
+                Name = "Test Role 1",
+                Description = "Test description 1",
+                SeatsAvailable = 7,
+                IsAvailable = true,
+                IsPrimary = false,
+                UserID = 1,
+            };
 
+            _intraApiDbContext.Roles.Add(Role);
+            await _intraApiDbContext.SaveChangesAsync();
 
-        //    _intraApiDbContext.Roles.Add(Role);
-        //    await _intraApiDbContext.SaveChangesAsync();
-
-        //    Role.CreatedBy.ShouldBe(_loggedInUserId);
-        //}
+            Role.UserID.ShouldBe(_loggedInUserId);
+        }
     }
 }
