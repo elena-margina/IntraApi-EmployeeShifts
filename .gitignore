@@ -361,3 +361,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/IntraApi.API.IntegrationTests/IntraApi.API.IntegrationTests.csproj
