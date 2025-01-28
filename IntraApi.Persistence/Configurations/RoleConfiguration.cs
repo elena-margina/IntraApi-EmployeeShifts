@@ -29,11 +29,6 @@ namespace IntraApi.Persistence.Configurations
             builder.Property(r => r.UserID)
                 .IsRequired();
 
-            //builder.HasOne(r => r.User)
-            //    .WithMany() 
-            //    .HasForeignKey(r => r.UserID)
-            //    .OnDelete(DeleteBehavior.Restrict); 
-
             builder.Property(r => r.DModify)
                 .IsRequired()
                 .HasDefaultValueSql("getdate()");

@@ -69,7 +69,6 @@ namespace IntraApi.App.Services
         public async Task<ApiBaseResponse> DeleteShiftAsync(int employeeShiftId)
         {
             DeleteEmployeeShiftCommand command = new DeleteEmployeeShiftCommand { EmployeeShiftId = employeeShiftId };
-            //var response = await _httpClient.PutAsJsonAsync("api/EmployeeShift/DeleteEmployeeShift", command);
 
             var request = new HttpRequestMessage
             {

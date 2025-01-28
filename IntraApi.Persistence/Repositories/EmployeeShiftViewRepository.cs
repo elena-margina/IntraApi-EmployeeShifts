@@ -16,7 +16,7 @@ namespace IntraApi.Persistence.Repositories
         public async Task<Dictionary<int, Dictionary<string, List<ShiftDto>>>> GetWeeklyShiftSchedule()
         {
             var startOfWeek = DateOnly.FromDateTime(DateTime.Now.StartOfWeek(DayOfWeek.Monday)); // Convert DateTime to DateOnly
-            var endOfWeek = startOfWeek.AddDays(7); // DateOnly allows AddDays
+            var endOfWeek = startOfWeek.AddDays(7);
 
             var shifts = await _dbContext.EmployeeShiftsV
                 .Where(shift => shift.ShiftDate >= startOfWeek && shift.ShiftDate < endOfWeek)  
@@ -104,11 +104,7 @@ namespace IntraApi.Persistence.Repositories
         {
             var overlappingShifts = _dbContext.EmployeeShiftsV
                                                     .Where(e => e.EmployeeID == employeeId && e.ShiftDate == shiftDate)
-                                                    .Where(e =>
-                                                            // New shift starts before the existing shift ends and ends after the existing shift starts
-                                                            (startTime <= e.EndTime && endTime >= e.StartTime)
-                                                             //||  (startTime == e.EndTime || endTime == e.StartTime) // Consider adjacent shifts
-                                                    )
+                                                    .Where(e =>(startTime <= e.EndTime && endTime >= e.StartTime))
                                                     .Any();
 
             return Task.FromResult(!overlappingShifts);

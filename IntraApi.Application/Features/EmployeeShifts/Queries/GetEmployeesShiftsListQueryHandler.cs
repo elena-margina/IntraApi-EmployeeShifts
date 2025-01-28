@@ -38,7 +38,7 @@ namespace IntraApi.Application.Features.EmployeeShifts.Queries
                 .GroupBy(shift => shift.EmployeeID.GetValueOrDefault())
                 .ToDictionary(
                     group => group.Key,
-                    group => group.First().RoleName // Get the first primary role name for each employee
+                    group => group.First().RoleName 
                 );
 
             var response = new EmployeesShiftsListVm

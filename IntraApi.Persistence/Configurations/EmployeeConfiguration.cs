@@ -25,11 +25,6 @@ namespace IntraApi.Persistence.Configurations
             builder.Property(e => e.UserID)
                 .IsRequired();
 
-            //builder.HasOne(e => e.User) // Assuming the Employee has a navigation property to the User entity
-            //    .WithMany() // Modify based on your actual User-Employee relationship (if needed)
-            //    .HasForeignKey(e => e.UserID)
-            //    .OnDelete(DeleteBehavior.Restrict); // Configure delete behavior as per your requirements
-
             builder.Property(e => e.DModify)
                 .IsRequired()
                 .HasDefaultValueSql("getdate()");

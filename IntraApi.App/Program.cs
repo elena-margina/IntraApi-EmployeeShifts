@@ -1,13 +1,10 @@
-using IntraApi.App.Data;
 using IntraApi.App.Services;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<EmployeeShiftService>();
 builder.Services.AddScoped<RoleService>();
 
@@ -18,10 +15,22 @@ builder.Services.AddHttpClient("IntraApi", client =>
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
+app.Map("/", context => Task.Run(() => context.Response.Redirect("/employeeshifts")));
+
+app.UseExceptionHandler("/Error"); 
+app.Use(async (context, next) =>
 {
-    app.UseExceptionHandler("/Error");
-}
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An unhandled exception occurred.");
+        context.Response.Redirect("/Error");
+    }
+});
 
 app.UseStaticFiles();
 

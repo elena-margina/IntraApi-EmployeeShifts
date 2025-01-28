@@ -31,19 +31,15 @@ namespace IntraApi.Application.Features.EmployeeRoless.Queries.GetEmployeeRolesL
 
         public async Task<List<EmployeesRolesListVm>> Handle(GetEmployeesRolesListQuery request, CancellationToken cancellationToken)
         {
-            // Fetch employees
             var employees = await _employeeRepository.ListAllAsync();
             var employeeIds = employees.Select(e => e.ID).ToList();
 
-            // Fetch related employee roles and roles
             var employeeRoles = await _employeeRoleRepository.ListAllAsync(er => employeeIds.Contains(er.EmployeeID));
             var roleIds = employeeRoles.Select(er => er.RoleID).Distinct().ToList();
             var roles = await _roleRepository.ListAllAsync(r => roleIds.Contains(r.ID));
 
-            // Map each employee and their roles
             var result = employees.Select(employee =>
             {
-                // Filter and map employee roles using AutoMapper
                 var employeeRoleDtos = employeeRoles
                     .Where(er => er.EmployeeID == employee.ID)
                     .Select(er =>
@@ -60,7 +56,6 @@ namespace IntraApi.Application.Features.EmployeeRoless.Queries.GetEmployeeRolesL
                     .Where(dto => dto != null)
                     .ToList();
 
-                // Map employee details and assign roles
                 var employeeVm = _mapper.Map<EmployeesRolesListVm>(employee);
                 employeeVm.Roles = employeeRoleDtos!;
                 return employeeVm;

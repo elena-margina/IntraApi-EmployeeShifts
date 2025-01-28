@@ -14,7 +14,7 @@ namespace IntraApi.Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public virtual async Task<T?> GetByIdAsync(int id)
+        public virtual async Task<T> GetByIdAsync(int id)
         {
             return await _dbContext.Set<T>().FindAsync(id);
         }
@@ -33,12 +33,6 @@ namespace IntraApi.Persistence.Repositories
         {
             return await _dbContext.Set<T>().Where(predicate).ToListAsync();
         }
-
-        //public async Task<IReadOnlyList<T>> ListAllAsync(Expression<Func<T, bool>> predicate)
-        //{
-        //    var result = await _dbContext.Set<T>().Where(predicate).FirstOrDefaultAsync();
-        //    return result == null ? null : new List<T> { result };
-        //}
 
         public async Task<T> AddAsync(T entity)
         {
